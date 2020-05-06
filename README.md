@@ -1,0 +1,2 @@
+# toponym_matching
+A flexible deep learning framework for candidate selection through toponym matching, using various state-of-the-art neural network architectures.
