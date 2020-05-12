@@ -18,7 +18,7 @@ Contents:
 * `wikigaz/generate_wikigaz_dataset.ipynb` (python script: `wikigaz/generate_dataset.py`): This notebook generates an equal number of positive and negative pairs from a list of toponyms. Positive candidates are derived from WikiGazetteer alternative names. To generate the negative candidates given a place name, we first divide it in ngrams, then retrieve all altnames that contain one of the ngrams and finally rank them using Levensthein distance. We filter out altnames that can correspond to locations within 50 km distance from the source place name. **Output:** A txt file with positive and negative toponym pairs, with three columns (without header): source toponym, target toponym, and True/False depending on whether they are alternate names of the same entity. Each row corresponds to a toponym pair:
 
 
-    | Toponym | Altname | Same Entity |
+    | Toponym | Altname | Matching |
     | ---------- | ------------- | ----- |
     | Orșova	 | Hrușova       | False |
     | Orșova	 | Hârșova       | False |
