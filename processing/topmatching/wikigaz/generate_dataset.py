@@ -1,0 +1,227 @@
+import re
+import os
+import datetime
+import pandas as pd
+from random import shuffle
+import multiprocessing as mp
+from geopy.distance import great_circle
+from Levenshtein import distance as levDist
+from IPython.display import display, clear_output
+
+def get_placename_and_unique_alt_names(place_dict):
+    #given a place we retrieve altnames and location (we don't use location for the moment)
+    
+    unique_alt_names = list(place_dict['altnames'])
+    placeloc = (place_dict["lat"],place_dict["lon"])
+    placename = place_dict['placename']
+    
+    return placename,unique_alt_names,placeloc
+
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+        
+def get_ngrams(placename, maxngrams,minngrams):
+    
+    ngrams = []
+    for nlen in range(maxngrams,minngrams,-1):
+        for ii in range(len(placename)-nlen+1):
+            ngrams.append(placename[ii:(ii+nlen)])
+    return ngrams
+
+
+def get_final_wrong_cands(cand_ngrams,unique_alt_names,placename,placeloc,n_neg_cand_to_generate,place_id):
+
+    selected_wrong_cands = set()
+    
+    """
+    for each ngram, we send a query to the DB
+    at the moment i'm parallelizing at the placename step, but this could be also parallelized
+    so searching different ngrams at the same time
+    """
+    
+    for cand_ngram in cand_ngrams:
+        
+        collected_wrong_cands = {x for x in altnames.keys() if cand_ngram in x if place_id not in altnames[x] and x!= placename and x not in unique_alt_names}
+        for k in collected_wrong_cands:
+            if k not in selected_wrong_cands:
+                selected_wrong_cands.add(k)
+    
+    # we filter out alternate names that can correspond to locations within 50 km from
+    # the main location
+    mindistance = 50
+    filtered_by_distance = set()
+    for x in selected_wrong_cands:
+        within_distance = False
+        for alt in altnames[x]:
+            lat_alt = float(wiki_ids[alt]["lat"])
+            lon_alt = float(wiki_ids[alt]["lon"])
+            lat_main = float(wiki_ids[place_id]["lat"])
+            lon_main = float(wiki_ids[place_id]["lon"])
+            if great_circle((lat_alt, lon_alt), (lat_main,lon_main)).km < mindistance:
+                within_distance = True
+        if within_distance == False:
+            filtered_by_distance.add(x)
+                
+    selected_wrong_cands = filtered_by_distance
+        
+    if len(selected_wrong_cands)<1:
+        return None
+    
+    # we rank them using LevDist so that we have on top the most similar wrong ones 
+    rank_wrong_cands = [[placename,x,levDist(x,placename)] for x in selected_wrong_cands]
+    
+    # we sort them
+    rank_wrong_cands.sort(key=lambda x: x[2])
+    
+    # and we keep only the top n, depending on the number of positive candidates
+    final_wrong_cands = rank_wrong_cands[:n_neg_cand_to_generate]
+    
+    return final_wrong_cands
+
+def normalized_lev(s1, s2):
+    fDist = float(int(len(s1 + s2)/2) - int(levDist(s1, s2))) / float(int(len(s1 + s2)/2))
+    return fDist
+
+def generate_cands(place_id):
+    
+    place_dict = wiki_ids[place_id]
+
+    placename,unique_alt_names,placeloc = get_placename_and_unique_alt_names(place_dict)
+    
+    unique_alt_names = [u for u in unique_alt_names if normalized_lev(u, placename) >= 0.2 or u in placename or placename in u]
+    
+    n_neg_cand_to_generate = len(unique_alt_names)
+      
+    # if we don't have other names we stop here
+    if len(unique_alt_names)>0:
+        
+        # the number of neg candidates depend on the number of positive candidates
+        n_neg_cand_to_generate = len(unique_alt_names)
+        
+        """
+        this has a huge impact on performance. it's the number of ngrams we will retrieve
+        at the moment n is equal to length of the placename -1 to -3
+        for Barcelona: ['Barcelon', 'arcelona', 'Barcelo', 'arcelon', 'rcelona']
+        other cutoffs will give better results, but the number of queries will explode
+        like this, with -3 and -5: ['Barcel','arcelo','rcelon','celona','Barce','arcel','rcelo','celon','elona']
+        """
+        
+        maxcutoff = len(placename)-1
+        mincutoff = len(placename)-3
+
+        cand_ngrams = get_ngrams(placename,maxcutoff,mincutoff)
+        
+        # now, having a set of ngams, we try to retrieve negative candidates
+        # so candidates that are similar based on ngrams overlap, like Marcelona for Barcelona
+        
+        final_cands = get_final_wrong_cands(cand_ngrams,unique_alt_names,placename,placeloc,n_neg_cand_to_generate,place_id)
+
+        if final_cands != None:
+            
+            # we keep only placename and wrongcand and add the label False
+            final_cands = [x[:2]+["False"] for x in final_cands]
+            
+            # we double check and in case the number of neg is less than the pos
+            # we take only a random selection of the positive
+            
+            n_final_wrong = len(final_cands)
+
+            shuffle(unique_alt_names)
+            
+            # we add the positive as well with the label
+            for i in range(n_final_wrong):
+                alt_name_cand = [placename,unique_alt_names[i],"True"]
+                final_cands.append(alt_name_cand)
+                
+            return final_cands
+           
+    else:
+        return None
+
+def main():
+    
+    p = mp.Pool(processes = N)
+
+    ct = 1
+    tot = 0
+    start = datetime.datetime.now()
+    
+    # i have divided the list of wiki titles in small chunks 
+    # so i can process a few at a times and identify how long it will take
+    for split in wiki_titles_splits:
+        
+        # we assign them to different processes
+        res = p.map(generate_cands, split)
+        
+        # we exclude the Nones
+        res = [x for x in res if x!= None]
+
+        res = [y for x in res for y in x if len(y)>1]
+        
+        #write out the results
+        for el in res:
+            out.write('\t'.join(el)+"\n")
+            tot += 1
+        
+        # estimating how long it will take in number of days
+        
+        now = datetime.datetime.now()
+        diff = now - start
+        mean = round(diff.seconds / ct,2)
+        to_do = round((mean * n_splits-ct)/86400,2)
+        perc = round(ct/n_splits*100,3)
+        clear_output(wait=True)
+        print ("batches done:",ct,perc, "% , mean length batch in sec:",mean,", estimated days needed:",to_do,", total pairs written:",tot,', pages processed: ',ct*20)
+        ct+=1
+
+    p.close()
+
+
+if __name__ == '__main__':
+    
+    language = "en"
+    wikigaz_df = pd.read_pickle("wikigaz_" + language + ".pkl")
+    wikigaz_df["name"] = wikigaz_df['name'].str.replace('(','')
+    wikigaz_df["name"] = wikigaz_df['name'].str.replace(')','')
+    wikigaz_df.to_csv("wikigaz_" + language + ".tsv", sep = "\t", columns = ["wikititle", "name", "latitude", "longitude", "source"], header=False, index=False)
+    
+    # we retrieve wiki_ids and altnames and we structure them in two dictionaries (wiki_title -> altnames and altname -> wiki_titles)
+
+    wiki_variations = open("wikigaz_" + language + ".tsv","r").read().strip().split("\n")
+    wiki_variations = [x.split("\t") for x in wiki_variations]
+    wiki_variations = [[x[0]]+[x[0].replace("_"," ").replace('"','')]+x[1:] for x in wiki_variations]
+
+    wiki_ids = {x[0]:{"placename":x[1], "altnames":set(),"lat":"","lon":""} for x in wiki_variations}
+    altnames = {x[2]:set() for x in wiki_variations}
+
+    for x in wiki_variations:
+        if len(wiki_ids[x[0]]["altnames"])==0:
+            wiki_ids[x[0]]["lat"] = x[3]
+            wiki_ids[x[0]]["lon"] = x[4]
+
+        if x[2] not in wiki_ids[x[0]]["altnames"] and x[2]!=wiki_ids[x[0]]["placename"]:
+            wiki_ids[x[0]]["altnames"].add(x[2])
+
+        if x[0] not in altnames[x[2]]:
+            altnames[x[2]].add(x[0])
+    
+
+    wiki_titles = [x for x in wiki_ids.keys()]
+
+    shuffle(wiki_titles)
+    
+    # how many cpu to be used
+    N= mp.cpu_count()
+
+    # we organize it in chunks of 20 titles each
+
+    wiki_titles_splits = list(chunks(wiki_titles,20))
+    n_splits = len(wiki_titles_splits)
+
+    out = open("wikigaz_" + language + "_dataset.txt","w")    
+
+    main()
+    
+    out.close()
