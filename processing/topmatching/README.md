@@ -1,6 +1,6 @@
 # Generating datasets for toponym matching evaluation
 
-This folder contains the code and instructions to create the datasets used for intrinsic evaluation of toponym matching. 
+This folder contains the code and instructions to create the datasets used for intrinsic evaluation of toponym matching (`WikiGaz`, `OCR dataset`, and `GB1900`). In our experiments, we also use an existing resource created by [Santos et al. (2017)](https://eprints.lancs.ac.uk/id/eprint/89481/1/Manusc_Combining_Multiple_String_Similarity_Metrics_for_Effective_Toponym_Matching.pdf), which you will be able to obtain [here](https://github.com/ruipds/Toponym-Matching/tree/master/dataset). 
 
 ## WikiGaz
 
