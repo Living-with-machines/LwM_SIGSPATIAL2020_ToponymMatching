@@ -59,3 +59,19 @@ Contents:
     | Zurich           | _«urich          | FALSE            |
     | Zurich           | Zuilch           | TRUE             |
     | Zurich           | Zuæch            | FALSE            |
+
+## GB1900
+
+Contents:
+* `gb1900/create_gb1900_dataset`: This notebook matches records between WikiGazetteer (a Wikipedia-based gazetteer) and GB1900 (a nineteenth-century-map-based gazetteer), based on geographical distance of records (allowing a distance of 1 km and, if no match is found, 5 km) and on string similarity (character- and token-based) between alternate names for this record in WikiGazetteer and the GB1900 label. In order to run this notebook, it will be necessary to (1) create WikiGazetteer based on [these instructions](https://github.com/Living-with-machines/lwm_GIR19_resolving_places/tree/master/gazetteer_construction) and (2) download the GB1900 gazetteer ("COMPLETE GB1900 GAZETTEER — CC-BY-SA") from [here](https://www.visionofbritain.org.uk/data/). This outputs a `tsv` file with the following data, where `wiki` is a WikiGazetteer alternate name, `gb1900` is the GB1900 label of the matching record, `distance` is the distance between the two locations in meters, `jaccard_sim` is the token-based Jaccard similarity between `wiki` and `gb1900` after preprocessing the token, and `match` is the character-level-per-token similarity between `wiki` and `gb1900`:
+
+    | wiki        | gb1900         | distance             | jaccard_sim  | match                               |
+    | ----------- | -------------- | -------------------- | ------------ | ----------------------------------- |
+    | Abbotsford  | Abbotsford     | 192.3604442688453    | 1.0          | [('abbotsford', 'abbotsford', 1.0)] |
+    | Aberavon    | ABERAVON       | 154.70176379208857   | 1.0          | [('aberavon', 'aberavon', 1.0)]     |
+    | Abercarn    | Abercarn       | 446.57616398844806   | 1.0          | [('abercarn', 'abercarn', 1.0)]     |
+    | Aberearne   | Abercarn       | 446.57616398844806   | 1.0          | [('aberearne', 'abercarn', 0.8235)] |
+    | Aberdare    | Aberdare U. D. | 1439.7545998955593   | 1.0          | [('aberdare', 'aberdare', 1.0)]     |
+    | Aberdare    | ABERDARE       | 1519.6841523660232   | 1.0          | [('aberdare', 'aberdare', 1.0)]     |
+    | Aberdour    | Aberdour       | 198.25268181238914   | 1.0          | [('aberdour', 'aberdour', 1.0)]     |
+    | Aberfoyle   | Aberfoyle      | 334.39520728954983   | 1.0          | [('aberfoyle', 'aberfoyle', 1.0)]   |
