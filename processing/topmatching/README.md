@@ -63,7 +63,7 @@ Contents:
 ## GB1900
 
 Contents:
-* `gb1900/create_gb1900_dataset`: This notebook matches records between WikiGazetteer (a Wikipedia-based gazetteer) and GB1900 (a nineteenth-century-map-based gazetteer), based on geographical distance of records (allowing a distance of 1 km and, if no match is found, 5 km) and on string similarity (character- and token-based) between alternate names for this record in WikiGazetteer and the GB1900 label. In order to run this notebook, it will be necessary to (1) create WikiGazetteer based on [these instructions](https://github.com/Living-with-machines/lwm_GIR19_resolving_places/tree/master/gazetteer_construction) and (2) download the GB1900 gazetteer ("COMPLETE GB1900 GAZETTEER — CC-BY-SA") from [here](https://www.visionofbritain.org.uk/data/). This outputs a `tsv` file with the following data, where `wiki` is a WikiGazetteer alternate name, `gb1900` is the GB1900 label of the matching record, `distance` is the distance between the two locations in meters, `jaccard_sim` is the token-based Jaccard similarity between `wiki` and `gb1900` after preprocessing the token, and `match` is the character-level-per-token similarity between `wiki` and `gb1900`:
+* `gb1900/create_gb1900_dataset`: This notebook matches records between WikiGazetteer (a Wikipedia-based gazetteer) and GB1900 (a nineteenth-century-map-based gazetteer), based on geographical distance of records (allowing a distance of 1 km and, if no match is found, 5 km) and on string similarity (character- and token-based) between alternate names for this record in WikiGazetteer and the GB1900 label. In order to run this notebook, it will be necessary to (1) create WikiGazetteer based on [these instructions](https://github.com/Living-with-machines/lwm_GIR19_resolving_places/tree/master/gazetteer_construction) and (2) download the GB1900 gazetteer ("COMPLETE GB1900 GAZETTEER — CC-BY-SA") from [here](https://www.visionofbritain.org.uk/data/). **Output:** A `tsv` file with the following columns: `wiki` is a WikiGazetteer alternate name, `gb1900` is the GB1900 label of the matching record, `distance` is the distance between the two locations in meters, `jaccard_sim` is the token-based Jaccard similarity between `wiki` and `gb1900` after preprocessing the token, and `match` is the character-level-per-token similarity between `wiki` and `gb1900`:
 
     | wiki        | gb1900         | distance             | jaccard_sim  | match                               |
     | ----------- | -------------- | -------------------- | ------------ | ----------------------------------- |
@@ -75,3 +75,20 @@ Contents:
     | Aberdare    | ABERDARE       | 1519.6841523660232   | 1.0          | [('aberdare', 'aberdare', 1.0)]     |
     | Aberdour    | Aberdour       | 198.25268181238914   | 1.0          | [('aberdour', 'aberdour', 1.0)]     |
     | Aberfoyle   | Aberfoyle      | 334.39520728954983   | 1.0          | [('aberfoyle', 'aberfoyle', 1.0)]   |
+
+* `gb1900/create_gb1900_negative.ipynb`: This notebook creates the matching dataset of the same format as the two above. Positive matches are loaded from the output of the previous step. Negative matches are created similarly as in `wikigaz/generate_wikigaz_dataset.ipynb`, by first dividing the toponym in ngrams, then retrieving all toponyms that contain one of the ngrams and finally ranking them using Levensthein distance. **Output:** A txt file with positive and negative toponym pairs, with three columns (without header): source toponym, target toponym, and True/False depending on whether they are alternate names of the same entity. Each row corresponds to a toponym pair:
+
+    | Source                             | Target                 | Matching         |
+    | ---------------------------------- | ---------------------- | ---------------- |
+    | Pankeymoor Cottages                | Pankeymoor Cottage     | TRUE             |
+    | Pankeymoor Cottages                | Leymoor Bottom         | FALSE            |
+    | Monk-Okehampton                    | Monkokehampton         | TRUE             |
+    | Monk-Okehampton                    | Okehampton             | FALSE            |
+    | MONK-OKEHAMPTON                    | Monkokehampton         | TRUE             |
+    | MONK-OKEHAMPTON                    | ROCKHAMPTON            | FALSE            |
+    | Soldiers' Trenches                 | The Soldiers Trenches  | TRUE             |
+    | Soldiers' Trenches                 | golders green          | FALSE            |
+    | Loch of Drumellie or Marlee Loch   | Loch of Drumellie      | TRUE             |
+    | Loch of Drumellie or Marlee Loch   | Collier Street         | FALSE            |
+    | SOUTH BEDBURN                      | South Bedburn          | TRUE             |
+    | SOUTH BEDBURN                      | SOUTH CADBURY          | FALSE            |
