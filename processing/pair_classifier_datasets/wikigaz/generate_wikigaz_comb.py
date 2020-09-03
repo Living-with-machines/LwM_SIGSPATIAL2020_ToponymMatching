@@ -7,6 +7,8 @@ import multiprocessing as mp
 from geopy.distance import great_circle
 from Levenshtein import distance as levDist
 from IPython.display import display, clear_output
+import random
+import tqdm
 
 def get_placename_and_unique_alt_names(place_dict):
     #given a place we retrieve altnames and location (we don't use location for the moment)
@@ -31,7 +33,7 @@ def get_ngrams(placename, maxngrams,minngrams):
     return ngrams
 
 
-def get_final_wrong_cands(cand_ngrams,unique_alt_names,placename,placeloc,n_neg_cand_to_generate,place_id):
+def get_final_wrong_cands_challenging(cand_ngrams,unique_alt_names,placename,placeloc,n_neg_cand_to_generate,place_id):
 
     selected_wrong_cands = set()
     
@@ -40,10 +42,13 @@ def get_final_wrong_cands(cand_ngrams,unique_alt_names,placename,placeloc,n_neg_
     at the moment i'm parallelizing at the placename step, but this could be also parallelized
     so searching different ngrams at the same time
     """
-    
+    # We take all altnames that:
+    # * contain the a candidate ngram
+    # * are not possible positive altnames of the toponym
+    # * are not exact matches of the toponym
+    # * their length difference with respect to the toponym is less than 5 characters
     for cand_ngram in cand_ngrams:
-        
-        collected_wrong_cands = {x for x in altnames.keys() if cand_ngram in x if place_id not in altnames[x] and x!= placename and x not in unique_alt_names}
+        collected_wrong_cands = {x for x in altnames.keys() if cand_ngram in x if place_id not in altnames[x] and x!= placename and x not in unique_alt_names and (abs(len(x) - len(placename)) <= 5)}
         for k in collected_wrong_cands:
             if k not in selected_wrong_cands:
                 selected_wrong_cands.add(k)
@@ -72,8 +77,36 @@ def get_final_wrong_cands(cand_ngrams,unique_alt_names,placename,placeloc,n_neg_
     # we rank them using LevDist so that we have on top the most similar wrong ones 
     rank_wrong_cands = [[placename,x,levDist(x,placename)] for x in selected_wrong_cands]
     
-    # we sort them
+    # we sort them, from more similar to less (unlike in the trivial setting)
     rank_wrong_cands.sort(key=lambda x: x[2])
+    
+    # and we keep only the top n, depending on the number of positive candidates
+    final_wrong_cands = rank_wrong_cands[:n_neg_cand_to_generate]
+    
+    return final_wrong_cands
+
+def get_final_wrong_cands_trivial(unique_alt_names,placename,placeloc,n_neg_cand_to_generate,place_id):
+
+    selected_wrong_cands = set()
+    
+    # We take 50 random altnames that:
+    # * are not possible positive altnames of the toponym
+    # * are not exact matches of the toponym
+    # * their length difference with respect to the toponym is less than 5 characters
+    collected_wrong_cands = {x for x in random.sample(altnames.keys(), 50)}
+    for k in collected_wrong_cands:
+        if place_id not in altnames[k] and k != placename and k not in unique_alt_names and (abs(len(k) - len(placename)) <= 5):
+            if k not in selected_wrong_cands:
+                selected_wrong_cands.add(k)
+        
+    if len(selected_wrong_cands)<1:
+        return None
+    
+    # we rank them using LevDist so that we have on top the most similar wrong ones 
+    rank_wrong_cands = [[placename,x,levDist(x,placename)] for x in selected_wrong_cands]
+    
+    # we sort them, from more dissimilar to less (unlike in the challenging setting):
+    rank_wrong_cands.sort(key=lambda x: x[2], reverse=True)
     
     # and we keep only the top n, depending on the number of positive candidates
     final_wrong_cands = rank_wrong_cands[:n_neg_cand_to_generate]
@@ -89,16 +122,24 @@ def generate_cands(place_id):
     place_dict = wiki_ids[place_id]
 
     placename,unique_alt_names,placeloc = get_placename_and_unique_alt_names(place_dict)
+
+    challenging_alt_names = [u for u in unique_alt_names if u != placename]
     
-    unique_alt_names = [u for u in unique_alt_names if normalized_lev(u, placename) >= 0.2 or u in placename or placename in u]
-    
-    n_neg_cand_to_generate = len(unique_alt_names)
-      
-    # if we don't have other names we stop here
-    if len(unique_alt_names)>0:
+    challenging_alt_names = [u for u in challenging_alt_names if normalized_lev(u, placename) > 0.25]
+
+    final_cands_chall = []
+    final_cands_trivial = []
+    final_cands = []
+
+
+    """
+    ### CHALLENGING PAIRS:
+    """
+
+    if len(challenging_alt_names)>0:
         
         # the number of neg candidates depend on the number of positive candidates
-        n_neg_cand_to_generate = len(unique_alt_names)
+        n_neg_cand_to_generate = len(challenging_alt_names)
         
         """
         this has a huge impact on performance. it's the number of ngrams we will retrieve
@@ -115,30 +156,73 @@ def generate_cands(place_id):
         
         # now, having a set of ngams, we try to retrieve negative candidates
         # so candidates that are similar based on ngrams overlap, like Marcelona for Barcelona
-        
-        final_cands = get_final_wrong_cands(cand_ngrams,unique_alt_names,placename,placeloc,n_neg_cand_to_generate,place_id)
+        final_cands_chall = get_final_wrong_cands_challenging(cand_ngrams,challenging_alt_names,placename,placeloc,n_neg_cand_to_generate,place_id)
 
-        if final_cands != None:
-            
+        if final_cands_chall != None:
             # we keep only placename and wrongcand and add the label False
-            final_cands = [x[:2]+["False"] for x in final_cands]
-            
+            final_cands_chall = [x[:2]+["False"] for x in final_cands_chall]
+                
             # we double check and in case the number of neg is less than the pos
             # we take only a random selection of the positive
             
-            n_final_wrong = len(final_cands)
+            n_final_wrong = len(final_cands_chall)
 
-            shuffle(unique_alt_names)
+            shuffle(challenging_alt_names)
             
             # we add the positive as well with the label
             for i in range(n_final_wrong):
-                alt_name_cand = [placename,unique_alt_names[i],"True"]
-                final_cands.append(alt_name_cand)
+                alt_name_cand = [placename,challenging_alt_names[i],"True"]
+                final_cands_chall.append(alt_name_cand)
+
+            """
+            ### TRIVIAL PAIRS: if there are challenging pairs, we also get trivial pairs:
+            """
+
+            trivial_alt_names = [u for u in unique_alt_names if u.lower() == placename.lower()]
+
+            # Randomly with probabily 1/20 we add a lower-cased toponym or upper-cased toponym as alternate name:
+            random_add = random.choice(range(0,20))
+            if random_add == 2:
+                trivial_alt_names.append(placename.lower())
+            if random_add == 3:
+                trivial_alt_names.append(placename.upper())
+
+            # the number of neg candidates depend on the number of positive candidates
+            n_neg_cand_to_generate = len(trivial_alt_names)
+            
+            # we try to retrieve negative trivial pairs for as many positive pairs
+            final_cands_trivial = get_final_wrong_cands_trivial(trivial_alt_names,placename,placeloc,n_neg_cand_to_generate,place_id)
+
+            if final_cands_trivial != None:
+                # we keep only placename and wrongcand and add the label False
+                final_cands_trivial = [x[:2]+["False"] for x in final_cands_trivial]
+                    
+                # we double check and in case the number of neg is less than the pos
+                # we take only a random selection of the positive
                 
-            return final_cands
-           
+                n_final_wrong = len(final_cands_trivial)
+
+                shuffle(trivial_alt_names)
+                
+                # we add the positive as well with the label
+                for i in range(n_final_wrong):
+                    alt_name_cand = [placename,trivial_alt_names[i],"True"]
+                    final_cands_trivial.append(alt_name_cand)
+    
+    # We join trivial and challenging pairs   
+    if final_cands_trivial:
+        final_cands += final_cands_trivial
+
+    if final_cands_chall:
+        final_cands += final_cands_chall
+    
+    if final_cands:
+        print(final_cands)
+        return final_cands
+
     else:
         return None
+
 
 def main():
     
@@ -150,7 +234,7 @@ def main():
     
     # i have divided the list of wiki titles in small chunks 
     # so i can process a few at a times and identify how long it will take
-    for split in wiki_titles_splits:
+    for split in tqdm.tqdm(wiki_titles_splits):
         
         # we assign them to different processes
         res = p.map(generate_cands, split)
@@ -164,25 +248,13 @@ def main():
         for el in res:
             out.write('\t'.join(el)+"\n")
             tot += 1
-        
-        # estimating how long it will take in number of days
-        
-        now = datetime.datetime.now()
-        diff = now - start
-        mean = round(diff.seconds / ct,2)
-        to_do = round((mean * n_splits-ct)/86400,2)
-        perc = round(ct/n_splits*100,3)
-        clear_output(wait=True)
-        print ("batches done:",ct,perc, "% , mean length batch in sec:",mean,", estimated days needed:",to_do,", total pairs written:",tot,', pages processed: ',ct*20)
-        ct+=1
 
-    p.close()
 
 
 if __name__ == '__main__':
     
     language = "en"
-    wikigaz_df = pd.read_pickle("wikigaz_" + language + ".pkl")
+    wikigaz_df = pd.read_pickle("../../../resources/wikiGaz_" + language + "_basic.pkl")
     wikigaz_df["name"] = wikigaz_df['name'].str.replace('(','')
     wikigaz_df["name"] = wikigaz_df['name'].str.replace(')','')
     wikigaz_df.to_csv("wikigaz_" + language + ".tsv", sep = "\t", columns = ["wikititle", "name", "latitude", "longitude", "source"], header=False, index=False)
@@ -198,11 +270,11 @@ if __name__ == '__main__':
 
     for x in wiki_variations:
         if len(wiki_ids[x[0]]["altnames"])==0:
-            wiki_ids[x[0]]["lat"] = x[3]
-            wiki_ids[x[0]]["lon"] = x[4]
+           wiki_ids[x[0]]["lat"] = x[3]
+           wiki_ids[x[0]]["lon"] = x[4]
 
-        if x[2] not in wiki_ids[x[0]]["altnames"] and x[2]!=wiki_ids[x[0]]["placename"]:
-            wiki_ids[x[0]]["altnames"].add(x[2])
+        if x[2] not in wiki_ids[x[0]]["altnames"]:
+           wiki_ids[x[0]]["altnames"].add(x[2])
 
         if x[0] not in altnames[x[2]]:
             altnames[x[2]].add(x[0])
@@ -220,8 +292,9 @@ if __name__ == '__main__':
     wiki_titles_splits = list(chunks(wiki_titles,20))
     n_splits = len(wiki_titles_splits)
 
-    out = open("wikigaz_" + language + "_dataset.txt","w")    
+    out = open("../../../datasets/pair_classifier/wikigaz_" + language + "_dataset.txt","w")    
 
     main()
     
     out.close()
+#     p.close()
