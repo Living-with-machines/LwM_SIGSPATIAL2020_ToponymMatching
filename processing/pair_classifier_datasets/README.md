@@ -4,8 +4,6 @@ This folder contains the code and instructions to create the datasets used for e
 
 In our experiments, we also use an existing resource created by [Santos et al. (2017)](https://eprints.lancs.ac.uk/id/eprint/89481/1/Manusc_Combining_Multiple_String_Similarity_Metrics_for_Effective_Toponym_Matching.pdf), which you will be able to download from [here](https://github.com/ruipds/Toponym-Matching/tree/master/dataset). 
 
-[**To add later** The `standardize_datasets` notebook separates the resulting datasets into two: (1) trainval (90% of the data, used for training and validation), and (2) test (10% of the data, used for testing). Both are balanced in terms of number of matching and non-matching pairs. Run it at the end, after having created the different datasets following the instructions below.]
-
 ## WikiGaz
 
 Contents:
@@ -49,7 +47,7 @@ Contents:
     | Wnkehuist     | Wakehurst    |
 
 
-In this notebook, for each human-corrected token, we consider all its observed OCR'd variations in the dataset as positive pairings. We then capture the most observed OCR transformations in the dataset, and artificially build negative pairs by introducing weighted random transformations for characters in the human-corrected string. We build as many negative pairs as positive pairs exist for a human-corrected string. **Output:** `ocr_posneg.tsv`, a dataset of positive and negative token pairs, the first column corresponding to the correct spelling, the second column to the OCR variation, and the third column the whether the matching is true or not. See some examples in table \ref{tab:ocrdataset}).
+    In this notebook, for each human-corrected token, we consider all its observed OCR'd variations in the dataset as positive pairings. We then capture the most observed OCR transformations in the dataset, and artificially build negative pairs by introducing weighted random transformations for characters in the human-corrected string. We build as many negative pairs as positive pairs exist for a human-corrected string. **Output:** `ocr_posneg.tsv`, a dataset of positive and negative token pairs, the first column corresponding to the correct spelling, the second column to the OCR variation, and the third column the whether the matching is true or not. See some examples in the following table:
 
     | Correct spelling | OCR spelling     | Matching         |
     | ---------------- | ---------------- | ---------------- |
@@ -64,5 +62,9 @@ In this notebook, for each human-corrected token, we consider all its observed O
     | Zurich           | Zuilch           | TRUE             |
     | Zurich           | Zuæch            | FALSE            |
     
-    
+
+#### To do
+
 [**To add later:** Following the procedure described in [Van Strien et al [2019](https://www.staff.universiteitleiden.nl/binaries/content/assets/governance-and-global-affairs/isga/artidigh_2020_7_cr.pdf), we aligned OCR'd texts with their human-corrected counterpart at the token level. In the `ocrdataset/extract_ocr_alignments.ipynb` notebook, we identify tokens recognized as being part of named entities in the human-corrected text. **Output:** a two-column tsv file, in which the first column corresponds to the token in the OCR text and the second column to the human-corrected aligned token]
+
+[**To add later:** The `standardize_datasets` notebook separates the resulting datasets into two: (1) trainval (90% of the data, used for training and validation), and (2) test (10% of the data, used for testing). Both are balanced in terms of number of matching and non-matching pairs. Run it at the end, after having created the different datasets following the instructions below.]
