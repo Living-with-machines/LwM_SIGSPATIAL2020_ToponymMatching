@@ -5,7 +5,7 @@ This folder contains the code and instructions to create the datasets used for e
 ## WikiGaz
 
 Contents:
-* `toponym_matching_datasets/wikigaz/process_wikigaz.ipynb`: WikiGazetteer is a gazetteer based on Wikipedia and enriched with Geonames data. To build a WikiGazetteer (into a MySQL database) for a specific Wikipedia language and version, follow [these instructions](https://github.com/Living-with-machines/lwm_GIR19_resolving_places/tree/master/gazetteer_construction). This notebook takes the relevant fields in the WikiGazetteer MySQL database and creates a more manageable pickle file. **Output:** A dataframe for the selected WikiGazetteer version, with one row per toponym and location, with the following columns: `index`, `name`, `wikititle`, `latitude`, `longitude`, `source`.
+* `toponym_matching_datasets/wikigaz/process_wikigaz.ipynb`: WikiGazetteer is a gazetteer based on Wikipedia and enriched with Geonames data. To build a WikiGazetteer into a MySQL database for a specific Wikipedia language and version, follow [these instructions](https://github.com/Living-with-machines/lwm_GIR19_resolving_places/tree/master/gazetteer_construction). This notebook takes the relevant fields in the WikiGazetteer MySQL database and creates a more manageable pickle file. **Output:** A dataframe for the selected WikiGazetteer version, with one row per toponym and location, with the following columns: `index`, `name`, `wikititle`, `latitude`, `longitude`, `source`.
 
     |        | name      | wikititle | latitude | longitude | source      |
     | ------ | --------- | --------- | -------- | --------- | ----------- |
@@ -15,7 +15,7 @@ Contents:
     | 406299 | Limoĝo    | Limoges   | 45.8344  | 1.26167   | geonamesalt |
     | 406300 | Limòtges  | Limoges   | 45.8344  | 1.26167   | geonamesalt |
     
-    **Note:** You can skip this step and download the pickle files for the English, Spanish, and Greek WikiGazetteers from [here](https://thealanturininstitute-my.sharepoint.com/:f:/g/personal/mcollardanuy_turing_ac_uk/El5Bw5rXCGxEkhKYUbd9cqABlSJmVULkLfpQMPcFzvVaDQ?e=ZukmYP) instead. Store them in `toponym_matching/resources/`.
+    :warning: **Note:** You can skip this step and download the pickle files for the English, Spanish, and Greek WikiGazetteers from [here](https://thealanturininstitute-my.sharepoint.com/:f:/g/personal/mcollardanuy_turing_ac_uk/El5Bw5rXCGxEkhKYUbd9cqABlSJmVULkLfpQMPcFzvVaDQ?e=ZukmYP) instead. Store them in `toponym_matching/resources/`.
 
 * `toponym_matching_datasets/wikigaz/generate_wikigaz_comb.py`: This script generates an equal number of positive and negative pairs from a list of toponyms. Positive candidates are derived from WikiGazetteer alternative names. We generate two types of positive/negative pairs: trivial and challenging. **Output:** a txt file with positive and negative toponym pairs, with three columns (without header): source toponym, target toponym, and True/False depending on whether they are alternate names of the same entity or not. Each row corresponds to a toponym pair (see table below).
 
@@ -46,7 +46,7 @@ Contents:
     | Canberia      | Canberra     |
     | Wnkehuist     | Wakehurst    |
     
-    **Note:** You can skip this step and download the resulting `ocrTokens.tsv` file [from here](https://thealanturininstitute-my.sharepoint.com/:u:/g/personal/mcollardanuy_turing_ac_uk/EQjwVXAFawBPrHiPkwysjlUBVQ9_B5EvCiyoI85yvTiOoQ?e=wbh3eV) instead. Store it in `toponym_matching/resources/`.
+    :warning: **Note:** You can skip this step and download the resulting `ocrTokens.tsv` file [from here](https://thealanturininstitute-my.sharepoint.com/:u:/g/personal/mcollardanuy_turing_ac_uk/EQjwVXAFawBPrHiPkwysjlUBVQ9_B5EvCiyoI85yvTiOoQ?e=wbh3eV) instead. Store it in `toponym_matching/resources/`.
 
 * `toponym_matching_datasets/ocr/create_dataset.ipynb`: This notebook generates a dataset of positive of negative pairs based on OCR'd tokens and their corresponding human corrections. It takes [ocrTokens.tsv file](https://thealanturininstitute-my.sharepoint.com/:u:/g/personal/mcollardanuy_turing_ac_uk/EQjwVXAFawBPrHiPkwysjlUBVQ9_B5EvCiyoI85yvTiOoQ?e=wbh3eV) as input, which contains aligned OCR'd tokens aligned to their human correction. In this notebook, for each human-corrected token, we consider all its observed OCR'd variations in the dataset as positive pairings. We then capture the most observed OCR transformations in the dataset, and artificially build negative pairs by introducing unobserved random transformations for characters in the human-corrected string. We build as many negative pairs as positive pairs exist for a human-corrected string. **Output:** `ocr_posneg.tsv`, a dataset of positive and negative token pairs, the first column corresponding to the correct spelling, the second column to the OCR variation, and the third column the whether the matching is true or not. See some examples in the following table:
 
