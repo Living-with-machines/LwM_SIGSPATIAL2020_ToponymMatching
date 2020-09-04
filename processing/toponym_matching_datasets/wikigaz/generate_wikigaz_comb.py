@@ -2,6 +2,7 @@ import re
 import os
 import datetime
 import pandas as pd
+from pathlib import Path
 from random import shuffle
 import multiprocessing as mp
 from geopy.distance import great_circle
@@ -253,7 +254,9 @@ def main():
 if __name__ == '__main__':
     
     language = "en"
-    wikigaz_df = pd.read_pickle("../../../resources/wikiGaz_" + language + "_basic.pkl")
+    path2wikigaz_basic = Path("../../../resources")
+    path2wikigaz_basic = path2wikigaz_basic / f"wikiGaz_{language}_basic.pkl"
+    wikigaz_df = pd.read_pickle(path2wikigaz_basic)
     wikigaz_df["name"] = wikigaz_df['name'].str.replace('(','')
     wikigaz_df["name"] = wikigaz_df['name'].str.replace(')','')
     wikigaz_df.to_csv("wikigaz_" + language + ".tsv", sep = "\t", columns = ["wikititle", "name", "latitude", "longitude", "source"], header=False, index=False)
