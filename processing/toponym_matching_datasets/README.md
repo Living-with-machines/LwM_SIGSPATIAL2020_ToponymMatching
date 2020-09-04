@@ -67,6 +67,12 @@ Contents:
 
 In our experiments, we also use an existing resource created by [Santos et al. (2017)](https://eprints.lancs.ac.uk/id/eprint/89481/1/Manusc_Combining_Multiple_String_Similarity_Metrics_for_Effective_Toponym_Matching.pdf), which you will be able to download from [here](https://github.com/ruipds/Toponym-Matching/tree/master/dataset). 
    
-#### To do
+# Normalize and split datasets
 
-[**To add later:** The `standardize_datasets` notebook separates the resulting datasets into two: (1) trainval (90% of the data, used for training and validation), and (2) test (10% of the data, used for testing). Both are balanced in terms of number of matching and non-matching pairs. Run it at the end, after having created the different datasets following the instructions below.]
+* `toponym_matching_datasets/split_normalize_datasets.py`: This script separates the resulting datasets into two: (1) trainval (90% of the data, used for training and validation), and (2) test (10% of the data, used for testing). Both are balanced in terms of number of matching and non-matching pairs. Run it at the end, after having created the different datasets. It takes a list of tuples as input (line 55), where each tuple is a different toponym matching dataset. Tuples consist of three parts:
+  * Output name of the normalized and split dataset.
+  * Path of the input dataset.
+  * Alphabet of the dataset, which at the moment can be:
+    * greek: the dataset will only consist of toponyms containing at least one greek character.
+    * latin: the dataset will only consist of toponyms containing at least one latin character.
+    * "" (empty): the dataset does not filter toponyms by alphabet.
