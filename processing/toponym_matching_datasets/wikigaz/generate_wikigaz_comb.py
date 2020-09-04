@@ -254,9 +254,11 @@ def main():
 if __name__ == '__main__':
     
     language = "en"
+
     path2wikigaz_basic = Path("../../../resources")
     path2wikigaz_basic = path2wikigaz_basic / f"wikiGaz_{language}_basic.pkl"
     wikigaz_df = pd.read_pickle(path2wikigaz_basic)
+
     wikigaz_df["name"] = wikigaz_df['name'].str.replace('(','')
     wikigaz_df["name"] = wikigaz_df['name'].str.replace(')','')
     wikigaz_df.to_csv("wikigaz_" + language + ".tsv", sep = "\t", columns = ["wikititle", "name", "latitude", "longitude", "source"], header=False, index=False)
