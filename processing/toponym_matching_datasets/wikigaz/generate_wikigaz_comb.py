@@ -217,7 +217,6 @@ def generate_cands(place_id):
         final_cands += final_cands_chall
     
     if final_cands:
-        print(final_cands)
         return final_cands
 
     else:
@@ -292,7 +291,7 @@ if __name__ == '__main__':
     wiki_titles_splits = list(chunks(wiki_titles,20))
     n_splits = len(wiki_titles_splits)
 
-    out = open("../../../datasets/pair_classifier/wikigaz_" + language + "_dataset.txt","w")    
+    out = open("wikigaz_" + language + "_dataset.txt","w")    
 
     main()
     
