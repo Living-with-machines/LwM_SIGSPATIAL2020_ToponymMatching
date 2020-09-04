@@ -1,5 +1,7 @@
+import argparse
 import re
 import os
+import sys
 import datetime
 import pandas as pd
 from pathlib import Path
@@ -253,7 +255,14 @@ def main():
 
 if __name__ == '__main__':
     
-    language = "en"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-l", "--language", default="en", 
+                    help="Choose between: 'en' (English), 'es' (Spanish) and 'el' (Greek)")
+    args = parser.parse_args()
+
+    if not args.language in ["en", "es", "el"]:
+        sys.exit(f"Selected language {args.language} is not supported. See the help message.")
+    language = args.language
 
     path2wikigaz_basic = Path("../../../resources")
     path2wikigaz_basic = path2wikigaz_basic / f"wikiGaz_{language}_basic.pkl"
