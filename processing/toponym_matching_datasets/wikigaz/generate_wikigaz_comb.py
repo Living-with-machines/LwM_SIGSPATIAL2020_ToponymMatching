@@ -286,6 +286,8 @@ if __name__ == '__main__':
                     help="Choose between: 'en' (English), 'es' (Spanish) and 'el' (Greek)")
     parser.add_argument("-n", "--number_cpus", default=-1, 
                     help="Number of CPUs to be used for processing. Default: -1 (use all)")
+    parser.add_argument("-tc", "--titles_per_chunk", default=20, 
+                    help="Number of titles per chunk")
     args = parser.parse_args()
 
     if not args.language in ["en", "es", "el"]:
@@ -297,6 +299,8 @@ if __name__ == '__main__':
         N = mp.cpu_count()
     else:
         N = int(args.number_cpus)
+    
+    titles_per_chunk = int(args.titles_per_chunk)
 
     path2wikigaz_basic = Path("../../../resources")
     path2wikigaz_basic = path2wikigaz_basic / f"wikiGaz_{language}_basic.pkl"
@@ -332,8 +336,8 @@ if __name__ == '__main__':
 
     shuffle(wiki_titles)
     
-    # we organize it in chunks of 20 titles each
-    wiki_titles_splits = list(chunks(wiki_titles, 20))
+    # we organize it in chunks, each chink has titles_per_chunk titles
+    wiki_titles_splits = list(chunks(wiki_titles, titles_per_chunk))
     n_splits = len(wiki_titles_splits)
 
     out = open("wikigaz_" + language + "_dataset.txt","w")    
