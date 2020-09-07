@@ -66,13 +66,19 @@ def normalize(output_name, dataset, alphabet):
     false_duplicates = duplicates[duplicates["Match"] == "FALSE"]
     df = df.drop_duplicates('check_string')
     df = df.drop(columns=['check_string'])
-    # Drop equal number of complementary pairs to keep a balanced dataset:
+    # Drop equal number of complementary pairs (if they exist) to keep a balanced dataset:
     for fd in false_duplicates.Source.to_list():
-        df_drop = df[(df["Source"] == fd) & (df["Match"] == "TRUE")].sample(n = 1).index
-        df.drop(df_drop, inplace=True)
+        try:
+            df_drop = df[(df["Source"] == fd) & (df["Match"] == "TRUE")].sample(n = 1).index
+            df.drop(df_drop, inplace=True)
+        except ValueError:
+            pass
     for td in true_duplicates.Source.to_list():
-        df_drop = df[(df["Source"] == td) & (df["Match"] == "FALSE")].sample(n = 1).index
-        df.drop(df_drop, inplace=True)
+        try:
+            df_drop = df[(df["Source"] == td) & (df["Match"] == "FALSE")].sample(n = 1).index
+            df.drop(df_drop, inplace=True)
+        except ValueError:
+            pass
     print(df.Match.value_counts())
     
     # Filter out strings according to in_alphabet function:
