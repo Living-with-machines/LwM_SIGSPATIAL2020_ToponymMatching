@@ -128,7 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
-.vscode/settings.json
-processing/toponym_matching_datasets/ocr/ocr_posneg.tsv
-.gitignore
-resources/ocrTokens.tsv
+
+.vscode
+processing
+resources
