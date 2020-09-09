@@ -42,6 +42,7 @@ def normalize(output_name, dataset, alphabet):
     else:
         df = dataset
     
+    # Normalize rows:
     df['Match'] = df['Match'].apply(lambda x: str(x).upper()) # Uppercase Match column
     df.applymap(lambda x: x.strip() if isinstance(x, str) else x) # Strip all strings
     df['Source'].fillna("", inplace = True) # Turn NaN values to empty strings in Source
@@ -61,30 +62,67 @@ def normalize(output_name, dataset, alphabet):
     # Drop duplicates (including reverse duplicates)
     df['check_string'] = df.apply(lambda row: ''.join(sorted([row['Source'], row['Target']])), axis=1)
     print(df.Match.value_counts())
+    
     duplicates = df[df.duplicated(subset=['check_string'])]
     true_duplicates = duplicates[duplicates["Match"] == "TRUE"]
     false_duplicates = duplicates[duplicates["Match"] == "FALSE"]
+    
     df = df.drop_duplicates('check_string')
     df = df.drop(columns=['check_string'])
-    # Drop equal number of complementary pairs (if they exist) to keep a balanced dataset:
+    
+    true_duplicates = true_duplicates.drop(columns=['check_string'])
+    false_duplicates = false_duplicates.drop(columns=['check_string'])
+    
+    true_duplicates_indices = true_duplicates.set_index(["Source"]).index
+    false_duplicates_indices = false_duplicates.set_index(["Source"]).index
+
+    df_true = df[df["Match"] == "TRUE"]
+    df_false = df[df["Match"] == "FALSE"]
+
+    true_pairs_indices = df_true.set_index(["Source"]).index
+    false_pairs_indices = df_false.set_index(["Source"]).index
+    
+    df_true2drop = df_true[true_pairs_indices.isin(false_duplicates_indices)]
+    df_false2drop = df_false[false_pairs_indices.isin(true_duplicates_indices)]
+    
+    i = 0
+    df2drop = pd.DataFrame(columns = ["Source", "Target", "Match"])
     for fd in false_duplicates.Source.to_list():
+        i += 1
         try:
-            df_drop = df[(df["Source"] == fd) & (df["Match"] == "TRUE")].sample(n = 1).index
-            df.drop(df_drop, inplace=True)
+            df2drop = df2drop.append(df_true2drop[df_true2drop["Source"] == fd].tail(1))
         except ValueError:
             pass
+        if i % 5000 == 0:
+            print(i)
+            
+    i = 0
     for td in true_duplicates.Source.to_list():
+        i += 1
         try:
-            df_drop = df[(df["Source"] == td) & (df["Match"] == "FALSE")].sample(n = 1).index
-            df.drop(df_drop, inplace=True)
+            df2drop = df2drop.append(df_false2drop[df_false2drop["Source"] == td].tail(1))
         except ValueError:
             pass
-    print(df.Match.value_counts())
+        if i % 5000 == 0:
+            print(i)
+    
+    df_index = df.set_index(["Source", "Target", "Match"]).index
+    df2drop_index = df2drop.set_index(["Source", "Target", "Match"]).index
+    
+    mask = ~df_index.isin(df2drop_index)
+    df = df.loc[mask]
+    
+    # Force a balanced dataset between TRUE and FALSE classes:
+    min_value = min(list(df.Match.value_counts().to_dict().values()))
+    df_true_min = df[df["Match"] == "TRUE"].sample(n = min_value)
+    df_false_min = df[df["Match"] == "FALSE"].sample(n = min_value)
+    df = pd.concat([df_true_min, df_false_min])
     
     # Filter out strings according to in_alphabet function:
     df = df[df.apply(lambda x: in_alphabet(x["Source"], x["Target"], alphabet), axis=1)]
     print(df.Match.value_counts())
     
+    # Split the dataframe (0.9 for train and validation, 0.1 for test)
     train = df.reset_index(                  # need to keep the index as a column
         ).groupby('Match'                    # split by "group"
         ).apply(lambda x: x.sample(frac=0.9) # in each group, do the random split
