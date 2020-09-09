@@ -1,7 +1,10 @@
+import argparse
 import re
 import os
+import sys
 import datetime
 import pandas as pd
+from pathlib import Path
 from random import shuffle
 import multiprocessing as mp
 from geopy.distance import great_circle
@@ -11,13 +14,13 @@ import random
 import tqdm
 
 def get_placename_and_unique_alt_names(place_dict):
-    #given a place we retrieve altnames and location (we don't use location for the moment)
+    """given a place we retrieve altnames and location (we don't use location for the moment)"""
     
-    unique_alt_names = list(place_dict['altnames'])
-    placeloc = (place_dict["lat"],place_dict["lon"])
     placename = place_dict['placename']
+    unique_alt_names = list(place_dict['altnames'])
+    placeloc = (place_dict["lat"], place_dict["lon"])
     
-    return placename,unique_alt_names,placeloc
+    return placename, unique_alt_names, placeloc
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
@@ -66,6 +69,7 @@ def get_final_wrong_cands_challenging(cand_ngrams,unique_alt_names,placename,pla
             lon_main = float(wiki_ids[place_id]["lon"])
             if great_circle((lat_alt, lon_alt), (lat_main,lon_main)).km < mindistance:
                 within_distance = True
+                break
         if within_distance == False:
             filtered_by_distance.add(x)
                 
@@ -114,28 +118,25 @@ def get_final_wrong_cands_trivial(unique_alt_names,placename,placeloc,n_neg_cand
     return final_wrong_cands
 
 def normalized_lev(s1, s2):
-    fDist = float(int(len(s1 + s2)/2) - int(levDist(s1, s2))) / float(int(len(s1 + s2)/2))
-    return fDist
+    return 1 - int(levDist(s1, s2)) / float(max(1, len(s1), len(s2)))
 
 def generate_cands(place_id):
     
     place_dict = wiki_ids[place_id]
 
-    placename,unique_alt_names,placeloc = get_placename_and_unique_alt_names(place_dict)
+    placename, unique_alt_names, placeloc = \
+            get_placename_and_unique_alt_names(place_dict)
 
     challenging_alt_names = [u for u in unique_alt_names if u != placename]
-    
     challenging_alt_names = [u for u in challenging_alt_names if normalized_lev(u, placename) > 0.25]
 
     final_cands_chall = []
     final_cands_trivial = []
     final_cands = []
 
-
     """
     ### CHALLENGING PAIRS:
     """
-
     if len(challenging_alt_names)>0:
         
         # the number of neg candidates depend on the number of positive candidates
@@ -147,6 +148,36 @@ def generate_cands(place_id):
         for Barcelona: ['Barcelon', 'arcelona', 'Barcelo', 'arcelon', 'rcelona']
         other cutoffs will give better results, but the number of queries will explode
         like this, with -3 and -5: ['Barcel','arcelo','rcelon','celona','Barce','arcel','rcelo','celon','elona']
+
+        --- Update (4 Sep 2020)
+
+        Using:         
+        maxcutoff = len(placename)-1
+        mincutoff = len(placename)-3
+        
+        will result in more challenging/interesting examples. (current setting) 
+        
+        The downside is that the number of found pairs will be 
+        less than more generous cutoffs, e.g.:
+        
+        maxcutoff = len(placename)-1
+        mincutoff = 1
+
+        Take the example:
+        s1 = "London" 
+        cand_ngrams = get_ngrams(s1,len(s1)-1,1); print(cand_ngrams)
+        OUTPUT:
+        ['Londo', 'ondon', 'Lond', 'ondo', 'ndon', 'Lon', 'ond', 'ndo', 'don', 'Lo', 'on', 'nd', 'do', 'on']
+
+        whereas:
+        cand_ngrams = get_ngrams(s1,len(s1)-1,len(s1)-3); print(cand_ngrams) 
+        OUTPUT:
+        ['Londo', 'ondon', 'Lond', 'ondo', 'ndon']
+
+        There are different ways to deal with these cases, e.g.:
+        * We could pass the whole cand_ngrams and have a break in get_final_wrong_cands_challenging, i.e.
+        stop searching for pairs when a specific number of candidates is reached
+        * Pass cand_ngrams = cand_ngrams[:N] 
         """
         
         maxcutoff = len(placename)-1
@@ -227,7 +258,6 @@ def main():
     
     p = mp.Pool(processes = N)
 
-    ct = 1
     tot = 0
     start = datetime.datetime.now()
     
@@ -240,7 +270,6 @@ def main():
         
         # we exclude the Nones
         res = [x for x in res if x!= None]
-
         res = [y for x in res for y in x if len(y)>1]
         
         #write out the results
@@ -252,15 +281,39 @@ def main():
 
 if __name__ == '__main__':
     
-    language = "en"
-    wikigaz_df = pd.read_pickle("../../../resources/wikiGaz_" + language + "_basic.pkl")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-l", "--language", default="en", 
+                    help="Choose between: 'en' (English), 'es' (Spanish) and 'el' (Greek)")
+    parser.add_argument("-n", "--number_cpus", default=-1, 
+                    help="Number of CPUs to be used for processing. Default: -1 (use all)")
+    parser.add_argument("-tc", "--titles_per_chunk", default=20, 
+                    help="Number of titles per chunk")
+    args = parser.parse_args()
+
+    if not args.language in ["en", "es", "el"]:
+        sys.exit(f"Selected language {args.language} is not supported. See the help message.")
+    language = args.language
+
+    if args.number_cpus < 0:
+        # how many cpu to be used
+        N = mp.cpu_count()
+    else:
+        N = int(args.number_cpus)
+    
+    titles_per_chunk = int(args.titles_per_chunk)
+
+    path2wikigaz_basic = Path("../../../resources")
+    path2wikigaz_basic = path2wikigaz_basic / f"wikiGaz_{language}_basic.pkl"
+    wikigaz_df = pd.read_pickle(path2wikigaz_basic)
+
     wikigaz_df["name"] = wikigaz_df['name'].str.replace('(','')
     wikigaz_df["name"] = wikigaz_df['name'].str.replace(')','')
-    wikigaz_df.to_csv("wikigaz_" + language + ".tsv", sep = "\t", columns = ["wikititle", "name", "latitude", "longitude", "source"], header=False, index=False)
+    wikigaz_df.to_csv("wikigaz_" + language + ".tsv", sep = "\t", 
+                      columns = ["wikititle", "name", "latitude", "longitude", "source"], 
+                      header=False, index=False)
     
     # we retrieve wiki_ids and altnames and we structure them in two dictionaries (wiki_title -> altnames and altname -> wiki_titles)
-
-    wiki_variations = open("wikigaz_" + language + ".tsv","r").read().strip().split("\n")
+    wiki_variations = open("wikigaz_" + language + ".tsv", "r").read().strip().split("\n")
     wiki_variations = [x.split("\t") for x in wiki_variations]
     wiki_variations = [[x[0]]+[x[0].replace("_"," ").replace('"','')]+x[1:] for x in wiki_variations]
 
@@ -283,17 +336,13 @@ if __name__ == '__main__':
 
     shuffle(wiki_titles)
     
-    # how many cpu to be used
-    N= mp.cpu_count()
-
-    # we organize it in chunks of 20 titles each
-
-    wiki_titles_splits = list(chunks(wiki_titles,20))
+    # we organize it in chunks, each chink has titles_per_chunk titles
+    wiki_titles_splits = list(chunks(wiki_titles, titles_per_chunk))
     n_splits = len(wiki_titles_splits)
 
     out = open("wikigaz_" + language + "_dataset.txt","w")    
 
     main()
-    
+
     out.close()
 #     p.close()
