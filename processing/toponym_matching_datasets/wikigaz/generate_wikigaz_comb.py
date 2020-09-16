@@ -302,9 +302,9 @@ if __name__ == '__main__':
     
     titles_per_chunk = int(args.titles_per_chunk)
 
-    path2wikigaz_basic = Path("../../../resources")
-    path2wikigaz_basic = path2wikigaz_basic / f"wikiGaz_{language}_basic.pkl"
-    wikigaz_df = pd.read_pickle(path2wikigaz_basic)
+    path2wikigaz_filtered = Path("../../resources")
+    path2wikigaz_filtered = path2wikigaz_filtered / f"wikiGaz_{language}_filtered.pkl"
+    wikigaz_df = pd.read_pickle(path2wikigaz_filtered)
 
     wikigaz_df["name"] = wikigaz_df['name'].str.replace('(','')
     wikigaz_df["name"] = wikigaz_df['name'].str.replace(')','')
