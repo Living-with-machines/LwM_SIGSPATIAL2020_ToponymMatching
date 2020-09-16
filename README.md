@@ -59,7 +59,7 @@ and in BibTex:
 }
 ```
 
-A longer version of the article in available on arXiv:
+A longer version of the article is in available on arXiv:
 
 ```
 Coll Ardanuy, M., Hosseini, K., McDonough, K., Krause, A., van Strien, D. and Nanni, F. (2020): A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching, arxiv:xxxx.xxxxx.
