@@ -75,80 +75,79 @@ def evaluate_ranking(gazetteer_name, candrank_dataset, deezymatch_model):
     
     maxCands = 20 # Candidates cutoff for MAP
     
-    if not Path("mapped_results/DeezyMapEval_" + candrank_dataset + "_" + gazetteer_name + "_" + deezymatch_model + ".txt", "w").is_file() and not Path("mapped_results/LevDamMapEval_" + candrank_dataset + "_" + gazetteer_name + ".txt").is_file() and not Path("mapped_results/ExactMapEval_" + candrank_dataset + "_" + gazetteer_name + ".txt").is_file():
+#     if not Path("mapped_results/DeezyMapEval_" + candrank_dataset + "_" + gazetteer_name + "_" + deezymatch_model + ".txt", "w").is_file() and not Path("mapped_results/LevDamMapEval_" + candrank_dataset + "_" + gazetteer_name + ".txt").is_file() and not Path("mapped_results/ExactMapEval_" + candrank_dataset + "_" + gazetteer_name + ".txt").is_file():
 
-        # Load gazetteer (for DeezyMatch)
-        gazetteer = pd.read_pickle("../datasets/gazetteers/" + gazetteer_name + ".pkl")
-        gazetteer = gazetteer[gazetteer['lat'].notna()]
-        gazetteer = gazetteer[gazetteer['lon'].notna()]
-        gazetteer["altname"] = gazetteer["altname"].str.normalize("NFKD")
+    # Load gazetteer (for DeezyMatch)
+    gazetteer = pd.read_pickle("../datasets/gazetteers/" + gazetteer_name + ".pkl")
+    gazetteer = gazetteer[gazetteer['lat'].notna()]
+    gazetteer = gazetteer[gazetteer['lon'].notna()]
+    gazetteer["altname"] = gazetteer["altname"].str.normalize("NFKD")
 
-        # Load gazetteer and lower-case it (for LevDam)
-        gazetteer_lc = pd.read_pickle("../datasets/gazetteers/" + gazetteer_name + ".pkl")
-        gazetteer_lc = gazetteer_lc[gazetteer_lc['lat'].notna()]
-        gazetteer_lc = gazetteer_lc[gazetteer_lc['lon'].notna()]
-        gazetteer_lc["altname"] = gazetteer_lc["altname"].str.lower().str.normalize("NFKD")
+    # Load gazetteer and lower-case it (for LevDam)
+    gazetteer_lc = pd.read_pickle("../datasets/gazetteers/" + gazetteer_name + ".pkl")
+    gazetteer_lc = gazetteer_lc[gazetteer_lc['lat'].notna()]
+    gazetteer_lc = gazetteer_lc[gazetteer_lc['lon'].notna()]
+    gazetteer_lc["altname"] = gazetteer_lc["altname"].str.lower().str.normalize("NFKD")
 
-        # Load gold standard dataset
-        datasetdf = pd.read_pickle("../datasets/candidate_ranking_datasets/" + candrank_dataset + ".pkl")
-        datasetdf = datasetdf[(datasetdf['lat'].notnull()) & (datasetdf['lon'].notnull())]
-        datasetdf["toponym"] = datasetdf["toponym"].str.normalize("NFKD")
+    # Load gold standard dataset
+    datasetdf = pd.read_pickle("../datasets/candidate_ranking_datasets/" + candrank_dataset + ".pkl")
+    datasetdf = datasetdf[(datasetdf['lat'].notnull()) & (datasetdf['lon'].notnull())]
+    datasetdf["toponym"] = datasetdf["toponym"].str.normalize("NFKD")
 
-        # Load DeezyMatch results
-        deezyresultsdf = pd.read_pickle("ranker_results/" + candrank_dataset + "_" + gazetteer_name + "_" + deezymatch_model + ".pkl")
-        deezyresultsdf["toponym"] = deezyresultsdf["query"].str.normalize("NFKD")
+    # Load DeezyMatch results
+    deezyresultsdf = pd.read_pickle("ranker_results/" + candrank_dataset + "_" + gazetteer_name + "_" + deezymatch_model + ".pkl")
+    deezyresultsdf["toponym"] = deezyresultsdf["query"].str.normalize("NFKD")
 
-        # List of unique toponyms
-        toponyms = list(datasetdf["toponym"].unique())
+    # List of unique toponyms
+    toponyms = list(datasetdf["toponym"].unique())
 
-        # Gold standard dictionary: {toponym: (lat, lon)}
-        gold_standard = dict()
-        for i, row in datasetdf.iterrows():
-            toponym = unicodedata.normalize('NFKD', str(row["toponym"]))
-            coords = (row["lat"], row["lon"])
-            if candrank_dataset == "wotr_test":
-                coords = (float(row["lat"]), float(row["lon"]))
-            if toponym in gold_standard:
-                if not coords in gold_standard[toponym]:
-                    gold_standard[toponym].append(coords)
-            else:
-                gold_standard[toponym] = [coords]
+    # Gold standard dictionary: {toponym: (lat, lon)}
+    gold_standard = dict()
+    for i, row in datasetdf.iterrows():
+        toponym = unicodedata.normalize('NFKD', str(row["toponym"]))
+        coords = (row["lat"], row["lon"])
+        if candrank_dataset == "wotr_test":
+            coords = (float(row["lat"]), float(row["lon"]))
+        if toponym in gold_standard:
+            if not coords in gold_standard[toponym]:
+                gold_standard[toponym].append(coords)
+        else:
+            gold_standard[toponym] = [coords]
 
-        # Load LevDam results
-        levdamresults = pd.read_pickle("levdam_results/" + candrank_dataset + "_" + gazetteer_name + ".pkl")
-        levdamresults["toponym"] = levdamresults["toponym"].str.normalize("NFKD")
+    # Load LevDam results
+    levdamresults = pd.read_pickle("levdam_results/" + candrank_dataset + "_" + gazetteer_name + ".pkl")
+    levdamresults["toponym"] = levdamresults["toponym"].str.normalize("NFKD")
 
-        mapDeezy = dict()
-        mapLevdam = dict()
-        mapExact = dict()
+    mapDeezy = dict()
+    mapLevdam = dict()
+    mapExact = dict()
 
-        # Store mapped ranking
-        with open("mapped_results/DeezyMapEval_" + candrank_dataset + "_" + gazetteer_name + "_" + deezymatch_model + ".txt", "w") as fw1, open("mapped_results/LevDamMapEval_" + candrank_dataset + "_" + gazetteer_name + ".txt", "w") as fw2, open("mapped_results/ExactMapEval_" + candrank_dataset + "_" + gazetteer_name + ".txt", "w") as fw3:
-            for toponym in gold_standard:
-                print(toponym)
-                toponym = unicodedata.normalize('NFKD', toponym)
-                gscoords = gold_standard[toponym]
-                gscoords = [coords for coords in gscoords if type(coords[0]) == float and type(coords[1]) == float]
-                for coords in gscoords:
+    # Store mapped ranking
+    with open("mapped_results/DeezyMapEval_" + candrank_dataset + "_" + gazetteer_name + "_" + deezymatch_model + ".txt", "w") as fw1, open("mapped_results/LevDamMapEval_" + candrank_dataset + "_" + gazetteer_name + ".txt", "w") as fw2, open("mapped_results/ExactMapEval_" + candrank_dataset + "_" + gazetteer_name + ".txt", "w") as fw3:
+        for toponym in gold_standard:
+            print(toponym)
+            toponym = unicodedata.normalize('NFKD', toponym)
+            gscoords = gold_standard[toponym]
+            gscoords = [coords for coords in gscoords if type(coords[0]) == float and type(coords[1]) == float]
+            for coords in gscoords:
 
-                    # Deezy: find candidates
-                    dzcands = deezyresultsdf[deezyresultsdf["toponym"].str.lower().str.contains("^" + toponym.lower() + "$")]
+                # Deezy: find candidates
+                dzcands = deezyresultsdf[deezyresultsdf["toponym"].str.lower().str.contains("^" + toponym.lower() + "$")]
 
-                    # LevDam: find candidates
-                    ldcands = levdamresults[levdamresults["toponym"].str.lower().str.contains("^" + toponym.lower() + "$")]
+                # LevDam: find candidates
+                ldcands = levdamresults[levdamresults["toponym"].str.lower().str.contains("^" + toponym.lower() + "$")]
 
-                    # Exact: find candidates
-                    exact_results = mapeval_candidates({toponym.lower(): 0.0}, gazetteer_lc, coords, 10, maxCands, "", True)
+                # Exact: find candidates
+                exact_results = mapeval_candidates({toponym.lower(): 0.0}, gazetteer_lc, coords, 10, maxCands, "", True)
 
-                    if not dzcands.empty and not ldcands.empty:
-                        deezymap = mapeval_candidates(dzcands.iloc[0]["faiss_distance"], gazetteer, coords, 10, maxCands, "faiss", False)
-                        fw1.write(toponym + "\t" + str(coords[0]) + "\t" + str(coords[1]) + "\t" + str(deezymap[0]) + "\t" + str(deezymap[1]) + "\n")
+                if not dzcands.empty and not ldcands.empty:
+                    deezymap = mapeval_candidates(dzcands.iloc[0]["faiss_distance"], gazetteer, coords, 10, maxCands, "faiss", False)
+                    fw1.write(toponym + "\t" + str(coords[0]) + "\t" + str(coords[1]) + "\t" + str(deezymap[0]) + "\t" + str(deezymap[1]) + "\n")
 
-                        levdammap = mapeval_candidates(ldcands.iloc[0]["fuzzyCandidatesLevDam"], gazetteer_lc, coords, 10, maxCands, "levdam", True)
-                        fw2.write(toponym + "\t" + str(coords[0]) + "\t" + str(coords[1]) + "\t" + str(levdammap[0]) + "\t" + str(levdammap[1]) + "\n")
+                    levdammap = mapeval_candidates(ldcands.iloc[0]["fuzzyCandidatesLevDam"], gazetteer_lc, coords, 10, maxCands, "levdam", True)
+                    fw2.write(toponym + "\t" + str(coords[0]) + "\t" + str(coords[1]) + "\t" + str(levdammap[0]) + "\t" + str(levdammap[1]) + "\n")
 
-                        print(toponym + "\t" + str(coords[0]) + "\t" + str(coords[1]) + "\t" + str(exact_results[0]) + "\t" + str(exact_results[1]) + "\n")
-                        fw3.write(toponym + "\t" + str(coords[0]) + "\t" + str(coords[1]) + "\t" + str(exact_results[0]) + "\t" + str(exact_results[1]) + "\n")
+                    fw3.write(toponym + "\t" + str(coords[0]) + "\t" + str(coords[1]) + "\t" + str(exact_results[0]) + "\t" + str(exact_results[1]) + "\n")
         
         
 """
