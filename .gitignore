@@ -130,6 +130,11 @@ dmypy.json
 .DS_Store
 
 .vscode
-processing
-resources
-datasets/*
+processing/resources/*
+datasets/candidate_mentions_sets/*.txt
+datasets/candidate_ranking_datasets/*.pkl
+datasets/gazetteers/*.pkl
+datasets/query_mentions_sets/*.txt
+datasets/toponym_matching_datasets/*.txt
+processing/wikigaz/*.txt
+processing/wikigaz/*.tsv
