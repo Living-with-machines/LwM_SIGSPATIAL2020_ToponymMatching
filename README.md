@@ -1,6 +1,6 @@
 # A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching
 
-This repository provides underlying code and materials for the paper 'A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching'.
+This repository provides underlying code and materials for the paper `A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching`.
 
 ## Table of contents
 
@@ -48,10 +48,10 @@ Description of main directories:
 * `experiments/`: contains the experiment codes and generated files.
 
 The `experiments/` folder contains two notebooks with the [experiments](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master/experiments) reported in the paper:
-* [Toponym_Matching_Experiments.ipynb](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/develop/experiments/Toponym_Matching_Experiments.ipynb) has the experiments summarized in table XXX.
-* [Candidate_Ranking_Experiments.ipynb](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/tm_experiments/experiments/Candidate_Ranking_Experiments.ipynb) has the experiments summarized in table XXX. 
+* [Toponym_Matching_Experiments.ipynb](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/develop/experiments/Toponym_Matching_Experiments.ipynb) has the experiments summarized in table 1.
+* [Candidate_Ranking_Experiments.ipynb](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/tm_experiments/experiments/Candidate_Ranking_Experiments.ipynb) has the experiments summarized in table 2. 
 
-:warning: Make sure you have gone through the required `processing` steps (described [here](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master/processing)) and that you have all data needed before you run the experiments.
+:warning: Make sure you have gone through the required `processing` steps (described [here](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master/processing)) and that you have all the data needed before you run the experiments.
 
 ## Citation
 
@@ -89,13 +89,13 @@ and in BibTex:
 
 ## Future work and contributing
 
-The authors of the paper plan to continue development of the code and experiments. We welcome pull requests for improvements and issues for any errors you encounter.
+The authors of the paper plan to further develop the codes and extend the experiments. We welcome pull requests for improvements and issues for any errors you encounter.
 
 ## Get in touch
 
 Contacts of the corresponding authors:
 * Mariona Coll Ardanuy, mcollardanuy[at]turing.ac.uk
-* Kasra Hosseini, khosseinizad[at]turing.ac.uk
+* Kasra Hosseini, khosseini[at]turing.ac.uk
 * Federico Nanni, fnanni[at]turing.ac.uk
 
 ## Acknowledgements
