@@ -1,14 +1,14 @@
 # Preparing datasets for external evaluation
 
-This notebook prepares the datasets that are going to be used for external evaluation. Each dataset is stored into a dataframe. Some columns are common to all the dataframes, others are specific for a particular dataset. Columns present in all dataframes are:
+This notebook prepares the datasets that are going to be used for external evaluation. Each dataset is stored into a dataframe. Some columns are common in all the dataframes, others are specific for a particular dataset. Columns in common in all dataframes are:
 - `source` (url or identifier of the document)
 - `text` (full text of the document)
-- `toponym` (each toponym as it appears in the text)
+- `toponym` (each toponym as appears in the text)
 - `startCh` (start character of the toponym in the text)
 - `endCh` (end character of the toponym in the text)
 - `lat` (latitude of the resolved location)
 - `lon` (longitude of the resolved location)
-- `reference` (whether the main reference is Wikipedia identifier or coordinates. If the reference is Wikipedia, we've in any case derived its coordinates whenever possible)
+- `reference` (whether the main reference is Wikipedia identifier or coordinates. If the reference is Wikipedia, we've in any case derived its coordinates when possible)
 
 ## Obtaining the datasets
 
