@@ -47,11 +47,11 @@ Description of main directories:
 * `datasets/`: contains datasets used in the experiments, resulting from running the `processing/` codes.
 * `experiments/`: contains the experiment codes and generated files.
 
-Make sure you have gone through the required `processing` steps (described [here](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/develop/processing)) and that you have all data needed to run the experiments.
-
 The `experiments/` folder contains two notebooks with the experiments reported in the paper:
 * [Toponym_Matching_Experiments](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/develop/experiments/Toponym_Matching_Experiments.ipynb) has the experiments summarized in table XXX.
 * [Candidate Ranking Experiments](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/tm_experiments/experiments/Candidate_Ranking_Experiments.ipynb) has the experiments summarized in table XXX. 
+
+:warning: Make sure you have gone through the required `processing` steps (described [here](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/develop/processing)) and that you have all data needed before you run the experiments.
 
 ## Citation
 
