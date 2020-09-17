@@ -14,11 +14,6 @@ This notebook prepares the datasets that are going to be used for external evalu
 
 Download the following datasets and store them in the `datasets` folder:
 - [x] [The War of the Rebellion dataset](https://github.com/utcompling/WarOfTheRebellion/archive/master.zip) (unzip it)
-- [x] [GeoVirus](https://github.com/milangritta/Pragmatic-Guide-to-Geoparsing-Evaluation/blob/master/data/Corpora/GeoVirus.xml)
-- [x] [TR-News](https://github.com/milangritta/Pragmatic-Guide-to-Geoparsing-Evaluation/blob/master/data/Corpora/TR-News.xml)
-- [x] [Local Global Lexicon](https://github.com/milangritta/Pragmatic-Guide-to-Geoparsing-Evaluation/blob/master/data/Corpora/lgl.xml)
-- [x] [GeoWebNews](https://github.com/milangritta/Pragmatic-Guide-to-Geoparsing-Evaluation/blob/master/data/GWN.xml)
 - [x] [La Argentina Manuscrita](https://recogito.pelagios.org/document/wzqxhk0h3vpikm/downloads) (Download the .csv file and rename it as `argentina_manuscrita.csv`)
-- [x] [Pausanias: Periegesis](https://recogito.pelagios.org/document/35zv4zm4iqp4aw/downloads) (Download the .csv file and rename it as `pausanias_periegesis.csv`)
 
-Finally, we also created our own annotated dataset, which will be available soon.
+Finally, we also created our own annotated dataset, which you can download from [here]**(ADD LINK TO DATASET)** and store it in `datasets/candidate_ranking_datasets/`.
