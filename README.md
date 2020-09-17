@@ -39,7 +39,7 @@ Description of main directories:
 * `datasets/`: contains datasets used in the experiments, resulting from running the `processing/` codes.
 * `experiments/`: contains the experiment codes and generated files.
 
-The `experiments/` folder contains two notebooks that replicate the experiments in the paper ([Toponym_Matching_Experiments](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/tm_experiments/experiments/Toponym_Matching_Experiments.ipynb) contains the experiments summarized in table XXX, and [Candidate Ranking Experiments](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/tm_experiments/experiments/Candidate_Ranking_Experiments.ipynb) contains the experiments summarized in table XXX). Make sure you have gone through the steps described in the `processing` README file and that you have all data needed to run the experiments.
+The `experiments/` folder contains two notebooks with the experiments reported in the paper ([Toponym_Matching_Experiments](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/tm_experiments/experiments/Toponym_Matching_Experiments.ipynb) has the experiments summarized in table XXX, and [Candidate Ranking Experiments](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/tm_experiments/experiments/Candidate_Ranking_Experiments.ipynb) has the experiments summarized in table XXX). Make sure you have gone through the required `processing` steps (described in this [README file](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/tm_experiments/processing/README.md)) and that you have all data needed to run the experiments.
 
 ## Citation
 
@@ -59,7 +59,7 @@ and in BibTex:
 }
 ```
 
-A longer version of the article is in available on arXiv:
+A longer version of the article is available on arXiv:
 
 ```
 Coll Ardanuy, M., Hosseini, K., McDonough, K., Krause, A., van Strien, D. and Nanni, F. (2020): A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching, arxiv:xxxx.xxxxx.
