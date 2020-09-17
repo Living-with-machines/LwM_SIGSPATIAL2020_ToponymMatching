@@ -89,7 +89,7 @@ and in BibTex:
 
 ## Future work and contributing
 
-The authors of the paper plan to further develop the codes and extend the experiments. We welcome pull requests for improvements and issues for any errors you encounter.
+The authors of the paper plan to further develop the codes and extend the experiments. We welcome pull requests for improvements and issues if you encounter any errors.
 
 ## Get in touch
 
