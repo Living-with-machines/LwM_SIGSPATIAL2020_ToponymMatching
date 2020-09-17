@@ -1,6 +1,6 @@
 # Datasets for toponym matching evaluation
 
-This folder contains the code and instructions to create the datasets used for evaluation of toponym matching (`WG:en`, `WG:es`, `WG:el`, and `OCR` datasets). The resulting datasets can be found ***[ADD LINK WITH FINAL RESOURCES]***. Read the instructions below to create them from scratch.
+This folder contains the code and instructions to create the datasets used for evaluation of toponym matching (`WG:en`, `WG:es`, `WG:el`, and `OCR` datasets).
 
 ## WikiGaz
 
