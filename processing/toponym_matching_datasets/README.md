@@ -45,7 +45,7 @@ Contents:
     
     :warning: **Note:** You can skip this step and download the resulting `ocrTokens.tsv` file [from here]**(ADD link to resource)** instead. Store it in `toponym_matching/resources/`.
 
-* `toponym_matching_datasets/ocr/create_dataset.ipynb`: This notebook generates a dataset of positive of negative pairs based on OCR'd tokens and their corresponding human corrections. It takes [ocrTokens.tsv file]**(ADD link to resource)** as input, which contains aligned OCR'd tokens aligned to their human correction. In this notebook, for each human-corrected token, we consider all its observed OCR'd variations in the dataset as positive pairings. We then capture the most observed OCR transformations in the dataset, and artificially build negative pairs by introducing unobserved random transformations for characters in the human-corrected string. We build as many negative pairs as positive pairs exist for a human-corrected string (see section 4.3.3 in the [arxiv paper]**(ADD link to paper)** for more details). **Output:** `ocr_posneg.tsv`, a dataset of positive and negative token pairs, the first column corresponding to the correct spelling, the second column to the OCR variation, and the third column the whether the matching is true or not. See some examples in the following table:
+* `processing/toponym_matching_datasets/ocr/create_dataset.ipynb`: This notebook generates a dataset of positive of negative pairs based on OCR'd tokens and their corresponding human corrections. It takes [ocrTokens.tsv file]**(ADD link to resource)** as input, which contains aligned OCR'd tokens aligned to their human correction. In this notebook, for each human-corrected token, we consider all its observed OCR'd variations in the dataset as positive pairings. We then capture the most observed OCR transformations in the dataset, and artificially build negative pairs by introducing unobserved random transformations for characters in the human-corrected string. We build as many negative pairs as positive pairs exist for a human-corrected string (see section 4.3.3 in the [arxiv paper]**(ADD link to paper)** for more details). **Output:** `ocr_posneg.tsv`, a dataset of positive and negative token pairs, the first column corresponding to the correct spelling, the second column to the OCR variation, and the third column the whether the matching is true or not. See some examples in the following table:
 
     | Correct spelling | OCR spelling     | Matching         |
     | ---------------- | ---------------- | ---------------- |
@@ -62,7 +62,7 @@ Contents:
 
 ## Santos
 
-In our experiments, we also use an existing resource created by [Santos et al. (2017)](https://eprints.lancs.ac.uk/id/eprint/89481/1/Manusc_Combining_Multiple_String_Similarity_Metrics_for_Effective_Toponym_Matching.pdf), which you will be able to download from [here](https://github.com/ruipds/Toponym-Matching/tree/master/dataset). 
+In our experiments, we also use an existing resource created by [Santos et al. (2017)](https://eprints.lancs.ac.uk/id/eprint/89481/1/Manusc_Combining_Multiple_String_Similarity_Metrics_for_Effective_Toponym_Matching.pdf), which you will be able to download from [here](https://github.com/ruipds/Toponym-Matching/tree/master/dataset). Store it in `processing/toponym_matching_datasets/santos/`
    
 # Normalize and split datasets
 
