@@ -104,4 +104,5 @@ Work for this paper was produced as part of [Living with Machines](http://living
 
 ## License
 
-This work is licensed under a xxxxx license.
+- The source codes are licensed under MIT License Copyright (c) 2020 Living with Machines.
+- The datasets hosted on [zenodo](https://zenodo.org/record/4034819) are licensed under CC-BY-4.0.
