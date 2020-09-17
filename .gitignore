@@ -131,8 +131,8 @@ dmypy.json
 
 .vscode
 processing/resources/*
-processing/toponym_matching_datasets/wikigaz/*.txt
-processing/toponym_matching_datasets/wikigaz/*.tsv
+processing/toponym_matching_datasets/*/*.txt
+processing/toponym_matching_datasets/*/*.tsv
 datasets/candidate_mentions_sets/*.txt
 datasets/candidate_ranking_datasets/*.pkl
 datasets/gazetteers/*.pkl
