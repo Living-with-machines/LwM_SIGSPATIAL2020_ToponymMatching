@@ -82,7 +82,7 @@ and in BibTex:
 @inproceedings{ardanuy2020geocandidate,
   title={DeezyMatch: A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching},
   author={Coll Ardanuy, Mariona and Hosseini, Kasra and McDonough, Katherine and Krause, Amrey and van Strien, Daniel and Nanni, Federico},
-  booktitle={arxiv:xxxx.xxxxx},
+  booktitle={arxiv:2009.08114},
   year={2020}
 }
 ```
