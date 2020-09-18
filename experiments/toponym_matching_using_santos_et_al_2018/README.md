@@ -1,14 +1,14 @@
 # Table 1, SIGSPATIAL paper
 
-Here, we summarize the log files generated while training/evaluating the `Santos et al.` model on the following datasets:
+Here, we summarize the log files generated during training/evaluation of the `Santos et al.` model on the following datasets:
  
 - [Santos](#santos)
-- [WG:en](#wg:en)
-- [WG:es](#wg:es)
-- [WG:el](#wg:el)
+- [WG:en](#wgen)
+- [WG:es](#wges)
+- [WG:el](#wgel)
 - [OCR](#ocr)
 
-Refer to Table 1 in the following paper:
+Refer to Table 1 in the paper:
 
 ```
 Coll Ardanuy, M., Hosseini, K., McDonough, K., Krause, A., van Strien, D. and Nanni, F. (2020): A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching, SIGSPATIAL: Poster Paper.
