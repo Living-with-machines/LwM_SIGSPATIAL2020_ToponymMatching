@@ -128,3 +128,22 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
+
+.vscode
+processing/resources/*
+processing/toponym_matching_datasets/*/*.txt
+processing/toponym_matching_datasets/*/*.tsv
+datasets/candidate_mentions_sets/*.txt
+datasets/candidate_ranking_datasets/*.pkl
+datasets/gazetteers/*.pkl
+datasets/query_mentions_sets/*.txt
+datasets/toponym_matching_datasets/*.txt
+processing/wikigaz/*.txt
+processing/wikigaz/*.tsv
+experiments/candidates
+experiments/combined
+experiments/levdam_results/*.pkl
+experiments/mapped_results/*.txt
+experiments/queries
+experiments/ranker_results/*.pkl
+experiments/models/*/*
