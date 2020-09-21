@@ -19,12 +19,13 @@ Please follow the instructions on [the installation section of DeezyMatch](https
 Once working Python and DeezyMatch environments are available, the following additional libraries need to be installed:
 
 ```bash
+pip install spacy
+pip install geopy
+pip install pandarallel
+pip install python-Levenshtein
 pip install pyxDamerauLevenshtein
 pip install haversine
-pip install pandarallel
 pip install mysql-connector-python
-pip install geopy
-pip install python-Levenshtein
 ```
 
 ## Data directory and structure
