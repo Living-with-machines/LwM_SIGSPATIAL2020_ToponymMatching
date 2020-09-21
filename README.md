@@ -14,6 +14,19 @@ This repository provides underlying code and materials for the paper `A Deep Lea
 
 ## Installation
 
+Please follow the instructions on [the installation section of DeezyMatch](https://github.com/Living-with-machines/DeezyMatch#installation) to set up an environment and install all required packages to run DeezyMatch.
+
+Once working Python and DeezyMatch environments are available, the following additional libraries need to be installed:
+
+```bash
+pip install pyxDamerauLevenshtein
+pip install haversine
+pip install pandarallel
+pip install mysql-connector-python
+pip install geopy
+pip install python-Levenshtein
+```
+
 ## Data directory and structure
 
 In our code, we assume the following directory structure:
