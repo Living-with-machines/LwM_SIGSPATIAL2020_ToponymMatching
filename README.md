@@ -62,8 +62,8 @@ Description of main directories:
 * `experiments/`: contains the experiment codes and generated files.
 
 The `experiments/` folder contains two notebooks with the [experiments](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master/experiments) reported in the paper:
-* [Toponym_Matching_Experiments.ipynb](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/develop/experiments/Toponym_Matching_Experiments.ipynb) has the experiments summarized in table 1.
-* [Candidate_Ranking_Experiments.ipynb](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/tm_experiments/experiments/Candidate_Ranking_Experiments.ipynb) has the experiments summarized in table 2. 
+* [Toponym_Matching_Experiments.ipynb](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/master/experiments/Toponym_Matching_Experiments.ipynb) has the experiments summarized in table 1.
+* [Candidate_Ranking_Experiments.ipynb](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/blob/master/experiments/Candidate_Ranking_Experiments.ipynb) has the experiments summarized in table 2. 
 
 :warning: Make sure you have gone through the required `processing` steps (described [here](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master/processing)) and that you have all the data needed before you run the experiments.
 
