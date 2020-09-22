@@ -5,12 +5,12 @@ This repository provides underlying code and materials for the paper `A Deep Lea
 ## Table of contents
 
 * [Installation](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master#installation)
-* [Data directory and structure](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/develop#data-directory-and-structure)
-* [Citation](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/develop#citation)
-* [Future work and contributing](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/develop#future-work-and-contributing)
-* [Get in touch](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/develop#get-in-touch)
-* [Acknowledgements](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/develop#acknowledgements)
-* [License](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/develop#license)
+* [Data directory and structure](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master#data-directory-and-structure)
+* [Citation](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master#citation)
+* [Future work and contributing](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master#future-work-and-contributing)
+* [Get in touch](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master#get-in-touch)
+* [Acknowledgements](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master#acknowledgements)
+* [License](https://github.com/Living-with-machines/LwM_SIGSPATIAL2020_ToponymMatching/tree/master#license)
 
 ## Installation
 
@@ -75,7 +75,6 @@ If you use or adapt this code in your paper, please cite:
 Coll Ardanuy, M., Hosseini, K., McDonough, K., Krause, A., van Strien, D. and Nanni, F. (2020): A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching, SIGSPATIAL: Poster Paper.
 ```
 
-and in BibTex:
 ```
 @inproceedings{ardanuy2020geocandidate,
   title={DeezyMatch: A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching},
@@ -91,7 +90,6 @@ A longer version of the article is available on arXiv:
 Coll Ardanuy, M., Hosseini, K., McDonough, K., Krause, A., van Strien, D. and Nanni, F. (2020): A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching, arxiv:2009.08114.
 ```
 
-and in BibTex:
 ```
 @inproceedings{ardanuy2020geocandidate,
   title={DeezyMatch: A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching},
