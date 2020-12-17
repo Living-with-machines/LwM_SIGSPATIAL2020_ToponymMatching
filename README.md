@@ -83,14 +83,15 @@ The `experiments/` folder contains two notebooks with the [experiments](https://
 If you use or adapt this code in your paper, please cite:
 
 ```
-Mariona Coll Ardanuy, Kasra Hosseini, Katherine McDonough, Amrey Krause, Daniel van Strien and Federico Nanni (2020): A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching, Proceedings of the 28th ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems (SIGSPATIAL): Poster Paper.
+Mariona Coll Ardanuy, Kasra Hosseini, Katherine McDonough, Amrey Krause, Daniel van Strien, and Federico Nanni. "A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching." In Proceedings of the 28th International Conference on Advances in Geographic Information Systems (SIGSPATIAL): Poster papers, pp. 385-388. 2020.
 ```
 
 ```
-@inproceedings{ardanuy2020geocandidate,
-  title={DeezyMatch: A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching},
+@inproceedings{collardanuy2020sigspatial,
+  title={A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching},
   author={Coll Ardanuy, Mariona and Hosseini, Kasra and McDonough, Katherine and Krause, Amrey and van Strien, Daniel and Nanni, Federico},
-  booktitle={Proceedings of the 28th ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems (SIGSPATIAL): Poster Paper},
+  booktitle={Proceedings of the 28th International Conference on Advances in Geographic Information Systems (SIGSPATIAL): Poster papers},
+  pages={385--388},
   year={2020}
 }
 ```
@@ -98,14 +99,15 @@ Mariona Coll Ardanuy, Kasra Hosseini, Katherine McDonough, Amrey Krause, Daniel 
 A longer version of the article is available on arXiv:
 
 ```
-Mariona Coll Ardanuy, Kasra Hosseini, Katherine McDonough, Amrey Krause, Daniel van Strien and Federico Nanni (2020): A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching, arxiv:2009.08114.
+Mariona Coll Ardanuy, Kasra Hosseini, Katherine McDonough, Amrey Krause, Daniel van Strien, and Federico Nanni. "A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching." arxiv:2009.08114. 2020.
 ```
 
 ```
-@article{ardanuy2020geocandidate,
+@article{collardanuy2020geocandidateArxiv,
   title={A Deep Learning Approach to Geographical Candidate Selection through Toponym Matching},
   author={Coll Ardanuy, Mariona and Hosseini, Kasra and McDonough, Katherine and Krause, Amrey and van Strien, Daniel and Nanni, Federico},
-  journal={arXiv preprint arXiv:2009.08114},
+  journal={arXiv e-prints},
+  pages={arxiv:2009.08114},
   year={2020}
 }
 ```
@@ -127,5 +129,7 @@ Work for this paper was produced as part of [Living with Machines](http://living
 
 ## License
 
-- The source codes are licensed under MIT License Copyright (c) 2020 Living with Machines.
+- The source codes are licensed under MIT License.
+- Copyright (c) 2020 The Alan Turing Institute, British Library Board, Queen Mary University of London, 
+University of Exeter, University of East Anglia and University of Cambridge.
 - The datasets hosted on [zenodo](https://zenodo.org/record/4034819) are licensed under CC-BY-4.0.
